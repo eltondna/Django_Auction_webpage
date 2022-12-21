@@ -1,0 +1,75 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+
+<!-- 1. Item information -->
+
+<h2>Listing Item : {{ item.title }}</h2><br><br>
+<h5> {{ watchlist_message }} </h5>
+<form action="{% url 'watchlist' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" value="{{ item.id }}" name="id">
+    <input type="submit" value="Watchlist" class="input_styling">
+</form>
+<br><br>
+<div>
+<img width="400" height="450" src="{{ item.image.url }}">
+<br><br>
+<p class="color"> Description:  {{ item.description }}</p>
+<br>
+
+<!-- 2. Item bidding information -->
+
+<!-- 2.1 Get the most updated price -->
+
+<!-- Use starting bid as default -->
+<h3>USD ${{ item.current_bid }} </h3>
+<h6>Starting bid: USD ${{ item.starting_bid }}</h6>
+
+
+<!-- Seller layout -->
+{% if is_seller %}
+<form action="{% url 'close' %}" method="post"><br>
+    {% csrf_token %}
+    <input class="input_styling" type="submit" value="Close Listing" >
+</form>
+
+
+<!--Other user layout -->
+{% else %}
+<p style="color: red"> {{ message }} </p>
+
+<!-- Number of bids + User bidding information if available  --> 
+<p>
+    <span>{{ number_of_bid }} bid(s) so far.</span>
+    {% if leading_bid == True %}
+    <span>Your bid is the current bid </span>
+    {% else %}
+    <span>Your bid is not the current bid </span>
+    {% endif %}
+</p>
+
+<!-- 2.2 Place Bid -->
+
+<form action="{% url 'item_info' item.id %}" method="post">
+    {% csrf_token %}
+    <input name="bid_price" class="input_styling" type="number" placeholder=" Bid"><br><br>
+    <input class="input_styling" type="submit" value="Place Bid" >
+</form>
+</div><br><br>
+{% endif %}
+
+
+<!--3. Item Description -->
+
+<h2>Details </h2>
+<ul>
+    <li>Listed by: {{ item.seller }}</li>
+    <li>Category: {{ item.category }}</li>
+
+<!-- Display Bid Winner if item has been closed -->
+    {% if item_bid_info.winner != None %}
+    <li>Winner: {{ item_bid_info.winner }}</li>
+    {% endif %} 
+</ul>
+{% endblock %}
+

@@ -1,0 +1,53 @@
+{% extends 'auctions/layout.html' %}
+
+{% block title %} Create Listing{% endblock %}
+
+
+{% block body %}
+
+<h1> Create Listing </h1>
+<br>
+<form action="{% url 'create' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h3> New Listing</h3>
+
+
+                                                        <!-- Post Information -->
+    <!-- 1. Category -->
+    <Select  class="input_styling"  name="category">
+        <option> Fashion</option>
+        <option> Toy </option>
+        <option> Electronic</option>
+        <option> Home </option>
+    </Select><br><br>
+                                                
+    <!-- 2. Image -->
+    <p><input class="input_styling" name="image" type="file"  accept="image/*" id="file" onchange="loadFile(event)" style="display: none;"></p>
+    <p><label for="file" style="cursor: pointer;">Upload Image</label></p>
+    <p><img id="output" height="250" /></p><br><br>
+
+    <!-- 3. Title -->
+    <input class="input_styling" name="title" type="text"  placeholder="Title"><br><br>
+
+    <!-- 4. Description -->
+    <textarea class="input_styling" name="description" style="width: 400px;" type="text"  placeholder="Describe the item"></textarea><br><br>
+    
+    <!-- 5. Starting_bid  -->
+    <input class="input_styling" type="number" name="starting_bid" placeholder="Starting Bid" step="0.01" required>
+    <label> USD </label><br><br>
+
+    <input class="input_styling" type="submit" required>
+
+
+
+
+</form>
+
+
+
+
+
+
+
+
+{% endblock %}

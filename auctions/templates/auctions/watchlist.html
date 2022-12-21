@@ -1,0 +1,28 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<h2> Watchlist </h2><br><br>
+    {% for item in watchlist %}
+    <div class="listing">
+        <div style="float: right; margin-top: 30px;" class="col-6">
+            <h2><a href="{% url 'item_info' item.item.id %}" class="color" >{{ item.item.title }} </a></h2>
+            <br>
+            <h5>Current Bid : {{ item.item.current_bid }} USD</h5>
+            <br>
+            <h5>Details </h5>
+            <ul>
+                <li>Created:  {{ item.item.creation_date}} </li>
+                <li>Listed by: {{ item.item.seller }}</li>
+                <li>Category: {{ item.item.category }}</li>
+            <!-- Display Bid Winner if item has been closed -->
+            </ul>
+
+        </div>
+       <div style="margin: 10px; margin-left: 50px;">
+        <img src="{{ item.item.image }}" height="250">
+       </div>
+    </div>
+    {% endfor %}
+
+
+{% endblock %}

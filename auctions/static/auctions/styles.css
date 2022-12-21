@@ -1,0 +1,26 @@
+body {
+    padding: 10px;
+    color: rgb(247, 214, 247);
+    background-color:black;
+}
+
+.color{
+    color: rgb(247, 214, 247);
+}
+
+.listing {
+    border: 2px solid white;
+    background-color: black;
+    height: 300px;
+    width: 1200px;
+}
+
+.input_styling{
+    border: 1px solid rgb(247, 214, 247);
+    background-color: black;
+    color:rgb(247, 214, 247);
+}
+
+
+ 
+
