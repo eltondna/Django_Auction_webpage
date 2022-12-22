@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .models import User ,Auction_item, bidding, Watchlist
+from .models import User ,Auction_item, bidding, Watchlist,Comment
 
 from datetime import datetime
 
@@ -31,11 +31,13 @@ def watchlist(request):
     else:
         item_id = request.POST.get("id")
         item = Auction_item.objects.get(id=item_id)
-        try: 
+
+        try:
+            Watchlist.objects.get(watcher = request.user,item=item)
+        except Watchlist.DoesNotExist:
             w_item = Watchlist(watcher=request.user,item=item)
             w_item.save()
-        except IntegrityError:
-            pass
+        
         return HttpResponseRedirect(reverse("item_info",args=(item_id)))
     
 # Create a listing
@@ -67,6 +69,7 @@ def create(request):
 def item_info(request,item_id):
     item = Auction_item.objects.get(id=item_id)
     bid_info = bidding.objects.filter(item=item)
+    comments = Comment.objects.filter(item=item)
     leading_bid = False 
     is_seller = False
 ############### for "leading_bid" ###############
@@ -93,6 +96,7 @@ def item_info(request,item_id):
             "number_of_bid": Number_of_bid,
             "leading_bid": leading_bid,
             "is_seller": is_seller,
+            "comments":comments,
         })
     else:
         new_bid_price = int(request.POST.get("bid_price"))
@@ -118,12 +122,24 @@ def item_info(request,item_id):
             "message": message,
             "number_of_bid": Number_of_bid,
             "leading_bid": leading_bid,
+            "comments":comments,
         })
 
 #Close listing item (For Seller)
 @login_required(login_url='login')
 def close(request):
     pass
+
+
+
+#Close listing item (For Seller)
+@login_required(login_url='login')
+def comment(request,item_id):
+    if request.method == "POST":
+        comment = request.POST.get("comment")
+        add_comment = Comment(user=request.user,item=Auction_item(id=item_id),comment=comment)
+        add_comment.save()
+        return HttpResponseRedirect(reverse("item_info",args=(item_id,)))
 
 
 

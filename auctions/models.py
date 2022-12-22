@@ -44,9 +44,17 @@ class bidding(models.Model):
 # Watchlist
 class Watchlist(models.Model):
     watcher = models.ForeignKey(User,on_delete=models.CASCADE,related_name="watchlist_user")
-    item = models.ForeignKey(Auction_item,on_delete=models.CASCADE,related_name="watchlist_item",unique=True)
+    item = models.ForeignKey(Auction_item,on_delete=models.CASCADE,related_name="watchlist_item")
+
+
+
 # Comment
 
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name="comment_people")
+    item = models.ForeignKey(Auction_item, on_delete=models.CASCADE, related_name="comment_item",null=True)
+    comment = models.CharField(max_length=100)
+    
 
 
 
