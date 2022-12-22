@@ -27,7 +27,6 @@ def watchlist(request):
         return render(request, "auctions/watchlist.html",{
             "watchlist": watchlist,
         })
-
     else:
         item_id = request.POST.get("id")
         item = Auction_item.objects.get(id=item_id)
@@ -39,7 +38,16 @@ def watchlist(request):
             w_item.save()
         
         return HttpResponseRedirect(reverse("item_info",args=(item_id)))
-    
+
+@login_required(login_url='login')
+def remove_watchlist(request):
+    if request.method=="POST":
+        item_id = request.POST.get("item_id")
+        watchlist = Watchlist.objects.get(watcher=request.user,item=item_id)
+        watchlist.delete()
+        return HttpResponseRedirect(reverse("watchlist"))
+
+
 # Create a listing
 @login_required(login_url='login')
 def create(request):
@@ -64,11 +72,24 @@ def create(request):
     return render(request, "auctions/create.html")
 
 
+
+# Item Category  
+def category(request,category):
+    if request.method == "GET":
+        cat_items = Auction_item.objects.filter(category=category)
+        return render(request, "auctions/category.html",{
+            "category_items": cat_items,
+            "category":category,
+        })
+
+
+
 #Item Detail Page
 @login_required(login_url='login')
 def item_info(request,item_id):
-    item = Auction_item.objects.get(id=item_id)
+    item = Auction_item.objects.filter(id=item_id).first()
     bid_info = bidding.objects.filter(item=item)
+    info = bid_info.first()
     comments = Comment.objects.filter(item=item)
     leading_bid = False 
     is_seller = False
@@ -97,6 +118,7 @@ def item_info(request,item_id):
             "leading_bid": leading_bid,
             "is_seller": is_seller,
             "comments":comments,
+            "bid_info": info,
         })
     else:
         new_bid_price = int(request.POST.get("bid_price"))
@@ -125,14 +147,33 @@ def item_info(request,item_id):
             "comments":comments,
         })
 
-#Close listing item (For Seller)
+# Close listing item (For Seller)
 @login_required(login_url='login')
-def close(request):
-    pass
+def close(request,item_id):
+    if request.method=="POST":
+        item = Auction_item.objects.get(id=item_id)
+        item.active = False
+        item.save()
+        bid_items = bidding.objects.filter(item=item)
+        # Get the highest bidder
+        itemlist = item.listing_item.all()
+        highest_bid =0
+        bid_winner = request.user
+        for item in itemlist:
+            if item.bid_price > highest_bid:
+                highest_bid = item.bid_price
+                bid_winner = item.bidder
 
+        # Assign attribute to the Auction_item and bidding model
+        # 1. bidding model 
+        for bid_item in bid_items:
+            bid_item.winner = bid_winner
+            bid_item.save()
+        # 2. Auction_item model 
+        
+        return HttpResponseRedirect(reverse("index"))
 
-
-#Close listing item (For Seller)
+# Comment Section 
 @login_required(login_url='login')
 def comment(request,item_id):
     if request.method == "POST":
@@ -140,9 +181,6 @@ def comment(request,item_id):
         add_comment = Comment(user=request.user,item=Auction_item(id=item_id),comment=comment)
         add_comment.save()
         return HttpResponseRedirect(reverse("item_info",args=(item_id,)))
-
-
-
 
 def login_view(request):
     if request.method == "POST":

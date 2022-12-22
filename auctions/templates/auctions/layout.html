@@ -34,10 +34,11 @@
                       Category
                     </a>
                     <div style="background-color:black" class="dropdown-menu">
-                        <a class="dropdown-item color" href="#">Fashion</a>
-                      <a class="dropdown-item color" href="#">Home</a>
-                      <a class="dropdown-item color" href="#">Toy</a>
-                      <a class="dropdown-item color" href="#">Electronic</a>
+                      <a class="dropdown-item color" href="{% url 'category' 'Fashion' %}">Fashion</a>
+                      <a class="dropdown-item color" href="{% url 'category' 'home' %}">Home</a>
+                      <a class="dropdown-item color" href="{% url 'category' 'toy' %}">Toy</a>
+                      <a class="dropdown-item color" href="{% url 'category' 'electronic' %}">Electronic</a>
+                     
                     </div>
                   </li>
                 <li class="nav-item">

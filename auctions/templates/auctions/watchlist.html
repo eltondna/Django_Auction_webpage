@@ -4,7 +4,12 @@
 <h2> Watchlist </h2><br><br>
     {% for item in watchlist %}
     <div class="listing">
-        <div style="float: right; margin-top: 30px;" class="col-6">
+        <div style=" float:right; margin-top: 30px;" class="col-6">
+            <form action="{% url 'remove_watchlist' %}" method="post" style="float: right">
+                {% csrf_token %}
+                <input type="hidden" name="item_id" value="{{ item.item.id }}">
+                <input type="submit" value="Remove" class="input_styling">
+            </form>
             <h2><a href="{% url 'item_info' item.item.id %}" class="color" >{{ item.item.title }} </a></h2>
             <br>
             <h5>Current Bid : {{ item.item.current_bid }} USD</h5>
@@ -14,9 +19,7 @@
                 <li>Created:  {{ item.item.creation_date}} </li>
                 <li>Listed by: {{ item.item.seller }}</li>
                 <li>Category: {{ item.item.category }}</li>
-            <!-- Display Bid Winner if item has been closed -->
             </ul>
-
         </div>
        <div style="margin: 10px; margin-left: 50px;">
         <img src="{{ item.item.image }}" height="250">
